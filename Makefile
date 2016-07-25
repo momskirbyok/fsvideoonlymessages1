@@ -1,6 +1,6 @@
 ARCHS = arm64 armv7
 
-TARGET = iphone:clang:latest:latest
+TARGET = iphone:clang:9.2:9.2
 
 
 
