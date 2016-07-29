@@ -1,0 +1,1 @@
+cmd: make package install -j8
