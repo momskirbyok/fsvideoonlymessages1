@@ -32,18 +32,15 @@
 %end
 
 %hook SpringBoard
-
-
-
-
 - (void)applicationDidFinishLaunching:(id)application {
-  
-%orig; 
-UIAlertController *alert = [[UIAlertView alloc] actionWithTitle:@"FSVideoOnlyMessages"
+	%orig;
+		NSLog(@"[FSVideoOnlyMessages] orig was called");
+	UIAlertController *alert = [[UIAlertController alloc] actionWithTitle:@"FSVideoOnlyMessages"
 							//use \n, hitting enter doesn't work :p
 							message:@"Thank you for installing my tweak! I hope you like it. \nFeel free to follow me on twitter  at @NathanIngraham"
-							preferredStyle:UIAlertActionStyleDefault];
-UIAlertAction* follow = [UIAlertAction actionWithTitle:@"Follow"
+							preferredStyle:UIAlertControllerStyleAlert];
+
+	UIAlertAction* follow = [UIAlertAction actionWithTitle:@"Follow"
                         style:UIAlertActionStyleDefault
                         handler:^(UIAlertAction * action)
                         {
@@ -88,15 +85,12 @@ UIAlertAction* follow = [UIAlertAction actionWithTitle:@"Follow"
 
 
 
-% end
+%end
 
 // %hook SBLockScreenViewController
 
 
 // - (void)viewDidAppear:(_Bool)arg1;{
- 
+
 
 // }
-
-
-
