@@ -1,0 +1,10 @@
+Package: com.nathaningraham.fsvideoonlymessages
+Name: FSVideoOnlyMessages
+Depends: mobilesubstrate
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Nathan Ingraham <nathanringraham@gmail.com>
+Author: Nathan Ingraham <nathanringraham@gmail.com>
+Section: Tweaks
+Version: 0.0.1-30+debug
+Installed-Size: 140

@@ -3,6 +3,8 @@
 // Instead of playing videos inline (in the bubble) in the messages app,
 // this tweak will play them in full screen.
 
+
+
 %hook CKUIBehavior
 - (BOOL)canShowContactPhotosInConversationList{
 	return TRUE;
@@ -30,15 +32,15 @@
 
 %hook SpringBoard
 
--(void)applicationDidFInishLaunching:(id)arg1{
 
-UIAlertController *alert = [UIAlertController
-							alertControllerWithTitle:@"FSVideoOnlyMessages"
+- (void)applicationDidFinishLaunching:(id)application {
+  
+
+UIAlertController *alert = [UIAlertView actionWithTitle:@"FSVideoOnlyMessages"
 							//use \n, hitting enter doesn't work :p
 							message:@"Thank you for installing my tweak! I hope you like it. \nFeel free to follow me on twitter  at @NathanIngraham"
-							preferredStyle:UIAlertControllerStyleAlert];
-UIAlertAction* follow = [UIAlertAction
-                        actionWithTitle:@"Follow"
+							preferredStyle:UIAlertActionStyleDefault];
+UIAlertAction* follow = [UIAlertAction actionWithTitle:@"Follow"
                         style:UIAlertActionStyleDefault
                         handler:^(UIAlertAction * action)
                         {
@@ -62,9 +64,8 @@ UIAlertAction* follow = [UIAlertAction
                             [alert dismissViewControllerAnimated:YES completion:nil];
 
                         }];
-   UIAlertAction* decline = [UIAlertAction
-                            actionWithTitle:@"No Thanks"
-                           style:UIAlertActionStyleDefault
+   UIAlertAction* decline = [UIAlertAction actionWithTitle:@"No Thanks"
+                           style:UIAlertActionStyleDestructive
                            handler:^(UIAlertAction * action)
                            {
 
@@ -78,8 +79,17 @@ UIAlertAction* follow = [UIAlertAction
 
    [self presentViewController:alert animated:YES completion:nil];
 
-
+ %orig;
 }
-
-
 %end
+
+// %hook SBLockScreenViewController
+
+
+// - (void)viewDidAppear:(_Bool)arg1;{
+ 
+
+// }
+
+
+
