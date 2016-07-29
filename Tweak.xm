@@ -3,7 +3,8 @@
 // Instead of playing videos inline (in the bubble) in the messages app,
 // this tweak will play them in full screen.
 
-
+#import <UIKit/UIKit.h>
+#import <SpringBoard/SpringBoard.h>
 
 %hook CKUIBehavior
 - (BOOL)canShowContactPhotosInConversationList{
@@ -33,10 +34,12 @@
 %hook SpringBoard
 
 
+
+
 - (void)applicationDidFinishLaunching:(id)application {
   
-
-UIAlertController *alert = [UIAlertView actionWithTitle:@"FSVideoOnlyMessages"
+%orig; 
+UIAlertController *alert = [[UIAlertView alloc] actionWithTitle:@"FSVideoOnlyMessages"
 							//use \n, hitting enter doesn't work :p
 							message:@"Thank you for installing my tweak! I hope you like it. \nFeel free to follow me on twitter  at @NathanIngraham"
 							preferredStyle:UIAlertActionStyleDefault];
@@ -76,12 +79,16 @@ UIAlertAction* follow = [UIAlertAction actionWithTitle:@"Follow"
 
    [alert addAction:follow];
    [alert addAction:decline];
+   [alert show];
+
 
    [self presentViewController:alert animated:YES completion:nil];
 
- %orig;
 }
-%end
+
+
+
+% end
 
 // %hook SBLockScreenViewController
 

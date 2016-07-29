@@ -17,6 +17,7 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = FSVideoOnlyMessages
 FSVideoOnlyMessages_FILES = Tweak.xm
 FSVideoOnlyMessages_PRIVATE_FRAMEWORKS = ChatKit
+FSVideoOnlyMessages_FRAMEWORKS = UIKit
 
 
 include $(THEOS_MAKE_PATH)/tweak.mk
