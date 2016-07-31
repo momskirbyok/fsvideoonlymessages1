@@ -31,56 +31,95 @@
 }
 %end
 
-%hook SpringBoard
-- (void)applicationDidFinishLaunching:(id)application {
-	%orig;
-		NSLog(@"[FSVideoOnlyMessages] orig was called");
-	UIAlertController *alert = [[UIAlertController alloc] actionWithTitle:@"FSVideoOnlyMessages"
-							//use \n, hitting enter doesn't work :p
-							message:@"Thank you for installing my tweak! I hope you like it. \nFeel free to follow me on twitter  at @NathanIngraham"
-							preferredStyle:UIAlertControllerStyleAlert];
 
-	UIAlertAction* follow = [UIAlertAction actionWithTitle:@"Follow"
+NSString * settingsPath = @"/var/mobile/Library/Preferences/com.nathaningraham.fsonlymessagesprefs.plist";
+
+NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:settingsPath];
+
+
+%hook SBHomeScreenViewController
+
+
+
+
+
+
+BOOL userHasSeenPopup = [[prefs objectForKey:@"default"] boolValue]; //gets switch value to determine if user has seen the pop up before 
+
+
+
+
+-(void)viewDidAppear:(BOOL)arg1{
+  %orig();
+
+
+// (void)registerBool:(BOOL *)prefs default:(BOOL)FALSE forKey:(NSString *)default{
+
+
+
+
+  if (userHasSeenPopup == FALSE){
+  UIAlertController * alert=   [UIAlertController
+                                 alertControllerWithTitle:@"Thanks for installng!"
+                                 message:@"....and the bubble videos be gone! \n FSVideoOnlyMessages is my first tweak. \n Follow me on Twitter if you'd like to be up to date on my learning adventure! :-)"
+                                 preferredStyle:UIAlertControllerStyleAlert]; //creates popup
+ 
+   UIAlertAction* ok = [UIAlertAction
+                        actionWithTitle:@"Sure! :-)"
                         style:UIAlertActionStyleDefault
                         handler:^(UIAlertAction * action)
                         {
 
-                        	NSString *user = @"NathanIngraham";
-    							if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetbot:"]])
-        						[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetbot:///user_profile/" stringByAppendingString:user]]];
+                  userHasSeenPopup = TRUE;
+                 
 
-    							else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitterrific:"]])
-        						[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitterrific:///profile?screen_name=" stringByAppendingString:user]]];
+                 
+                   //sets the 
+                  [prefs release];
 
-    							else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetings:"]])
-        						[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetings:///user?screen_name=" stringByAppendingString:user]]];
 
-    							else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter:"]])
-        						[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitter://user?screen_name=" stringByAppendingString:user]]];
 
-    							else
-        						[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"https://mobile.twitter.com/" stringByAppendingString:user]]];
+                  NSString *user = @"NathanIngraham";
+                  if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetbot:"]])
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetbot:///user_profile/" stringByAppendingString:user]]];
+
+                  else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitterrific:"]])
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitterrific:///profile?screen_name=" stringByAppendingString:user]]];
+
+                  else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetings:"]])
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetings:///user?screen_name=" stringByAppendingString:user]]];
+
+                  else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter:"]])
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitter://user?screen_name=" stringByAppendingString:user]]];
+
+                  else
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"https://mobile.twitter.com/" stringByAppendingString:user]]];
 
                             [alert dismissViewControllerAnimated:YES completion:nil];
 
+                                                    
+                                               
+
                         }];
-   UIAlertAction* decline = [UIAlertAction actionWithTitle:@"No Thanks"
+
+   UIAlertAction* cancel = [UIAlertAction
+                            actionWithTitle:@"No Thanks!"
                            style:UIAlertActionStyleDestructive
                            handler:^(UIAlertAction * action)
                            {
-
+                           	userHasSeenPopup = TRUE;
 
                                [alert dismissViewControllerAnimated:YES completion:nil];
+                               [prefs release];
 
                            }];
 
-   [alert addAction:follow];
-   [alert addAction:decline];
-   [alert show];
-
+   [alert addAction:ok];
+   [alert addAction:cancel];
 
    [self presentViewController:alert animated:YES completion:nil];
-
+						}
+						
 }
 
 
