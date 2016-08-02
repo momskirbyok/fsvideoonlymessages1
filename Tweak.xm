@@ -6,130 +6,107 @@
 #import <UIKit/UIKit.h>
 #import <SpringBoard/SpringBoard.h>
 
+BOOL firstInstall = YES;
+BOOL receivedPopup;
+BOOL userHasSeenTwitter;
+
 %hook CKUIBehavior
 - (BOOL)canShowContactPhotosInConversationList{
-	return TRUE;
+  return TRUE;
 }
 
 
 
 - (BOOL)playsInlineVideo{
-	return FALSE;
+  return FALSE;
 }
 
 %end
 
 %hook CKUIBehaviorPad
 - (BOOL)canShowContactPhotosInConversationList{
-	return TRUE;
+  return TRUE;
 }
 %end
 
 %hook CKUIBehaviorNano
 - (BOOL)shouldShowContactPhotosInTranscript{
-	return TRUE;
+  return TRUE;
 }
 %end
 
-
-NSString * settingsPath = @"/var/mobile/Library/Preferences/com.nathaningraham.fsonlymessagesprefs.plist";
-
-NSMutableDictionary *prefs = [[NSMutableDictionary alloc] initWithContentsOfFile:settingsPath];
-
-
 %hook SBHomeScreenViewController
-
-
-
-
-
-
-BOOL userHasSeenPopup = [[prefs objectForKey:@"default"] boolValue]; //gets switch value to determine if user has seen the pop up before 
-
-
-
-
--(void)viewDidAppear:(BOOL)arg1{
-  %orig();
-
-
-// (void)registerBool:(BOOL *)prefs default:(BOOL)FALSE forKey:(NSString *)default{
-
-
-
-
-  if (userHasSeenPopup == FALSE){
+-(void)viewDidAppear:(bool)arg1 {
+%orig();
+   
+   NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/com.nathan.fsvideomessagesprefs.plist"];
+   NSMutableDictionary *mutableDict = dict ? [[dict mutableCopy] autorelease] : [NSMutableDictionary dictionary];
+   firstInstall = ([mutableDict objectForKey:@"firstInstall"] ? [[mutableDict objectForKey:@"firstInstall"] boolValue] : firstInstall); 
+ 
+ 
+ 
+ 
+if (firstInstall == YES){
+ 
   UIAlertController * alert=   [UIAlertController
-                                 alertControllerWithTitle:@"Thanks for installng!"
-                                 message:@"....and the bubble videos be gone! \n FSVideoOnlyMessages is my first tweak. \n Follow me on Twitter if you'd like to be up to date on my learning adventure! :-)"
+                                 alertControllerWithTitle:@"Thanks for installing FSVideoOnlyMessages V 1.3!"
+                                 message:@"....and the bubble videos be gone! \n FSVideoOnlyMessages is my first tweak. \n Follow me on Twitter if you'd like to be up to date on my learning adventure! :-) \n Changelog:\n •Follow notification only appears once now."
                                  preferredStyle:UIAlertControllerStyleAlert]; //creates popup
  
-   UIAlertAction* ok = [UIAlertAction
-                        actionWithTitle:@"Sure! :-)"
+   UIAlertAction* ok = [UIAlertAction 
+                        actionWithTitle:@"Follow 😊"
                         style:UIAlertActionStyleDefault
-                        handler:^(UIAlertAction * action)
-                        {
-
-                  userHasSeenPopup = TRUE;
-                 
-
-                 
-                   //sets the 
-                  [prefs release];
-
-
-
+                        handler:^(UIAlertAction * action) //Creates ok button
+                        {  
+ 
+                  receivedPopup = TRUE;
+                  //[preferences setBool:YES forKey:@"userHasSeenTwitter"];
+ 
                   NSString *user = @"NathanIngraham";
                   if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetbot:"]])
                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetbot:///user_profile/" stringByAppendingString:user]]];
-
+ 
                   else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitterrific:"]])
                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitterrific:///profile?screen_name=" stringByAppendingString:user]]];
-
+ 
                   else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetings:"]])
                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetings:///user?screen_name=" stringByAppendingString:user]]];
-
+ 
                   else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter:"]])
                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitter://user?screen_name=" stringByAppendingString:user]]];
-
+ 
                   else
                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"https://mobile.twitter.com/" stringByAppendingString:user]]];
-
+ 
                             [alert dismissViewControllerAnimated:YES completion:nil];
-
-                                                    
-                                               
-
+ 
+ 
+ 
+ 
                         }];
-
+ 
    UIAlertAction* cancel = [UIAlertAction
-                            actionWithTitle:@"No Thanks!"
+                            actionWithTitle:@"No Thanks! ❌"
                            style:UIAlertActionStyleDestructive
                            handler:^(UIAlertAction * action)
                            {
-                           	userHasSeenPopup = TRUE;
-
+                            receivedPopup = TRUE; //Creates "No Thanks! " button.
+                           // [preferences setBool:YES forKey:@"userHasSeenTwitter"];
+ 
                                [alert dismissViewControllerAnimated:YES completion:nil];
-                               [prefs release];
-
+ 
+ 
                            }];
-
-   [alert addAction:ok];
-   [alert addAction:cancel];
-
+ 
+   [alert addAction:ok]; //Adds the Sure! Button.
+   [alert addAction:cancel]; //Adds the No Thanks Button.
+ 
    [self presentViewController:alert animated:YES completion:nil];
-						}
-						
-}
-
-
-
+   [alert release];
+   [mutableDict setValue:@NO forKey:@"firstInstall"];
+   [mutableDict writeToFile:@"/var/mobile/Library/Preferences/com.nathan.fsvideomessagesprefs.plist" atomically:YES];
+ 
+            }
+            
+      }
 %end
-
-// %hook SBLockScreenViewController
-
-
-// - (void)viewDidAppear:(_Bool)arg1;{
-
-
-// }
